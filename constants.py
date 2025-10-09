@@ -7,12 +7,17 @@ AI_ICON_PATH = "images/ai_icon.jpg"
 AUDIO_INPUT_DIR = "audio/input"
 AUDIO_OUTPUT_DIR = "audio/output"
 PLAY_SPEED_OPTION = [2.0, 1.5, 1.2, 1.0, 0.8, 0.6]
-ENGLISH_LEVEL_OPTION = ["初級者", "中級者", "上級者"]
+ENGLISH_LEVEL_OPTION = ["初心者", "初級者", "中級者", "上級者"]     # 課題対応 英会話レベルに"初心者"を追加
 
 # 英語講師として自由な会話をさせ、文法間違いをさりげなく訂正させるプロンプト
 SYSTEM_TEMPLATE_BASIC_CONVERSATION = """
     You are a conversational English tutor. Engage in a natural and free-flowing conversation with the user. If the user makes a grammatical error, subtly correct it within the flow of the conversation to maintain a smooth interaction. Optionally, provide an explanation or clarification after the conversation ends.
-"""
+    - Expressions tailored to the specified English speaking level : {english_level}
+        - 初心者 : Easy sentences with basic vocabulary and grammar
+        - 初級者 : Slightly more complex sentences with common phrases
+        - 中級者 : Sentences with varied vocabulary and more complex structures
+        - 上級者 : Complex sentences with idiomatic expressions and nuanced meanings
+"""                                                                                  # 課題対応 画面指定した英会話レベルを考慮する文章を生成するようプロンプトに追記
 
 # 約15語のシンプルな英文生成を指示するプロンプト
 SYSTEM_TEMPLATE_CREATE_PROBLEM = """
@@ -22,9 +27,14 @@ SYSTEM_TEMPLATE_CREATE_PROBLEM = """
     - Friendly phrases used among friends
     - Sentences with situational nuances and emotions
     - Expressions reflecting cultural and regional contexts
+    - Expressions tailored to the specified English speaking level : {english_level}
+        - 初心者 : Easy sentences with basic vocabulary and grammar
+        - 初級者 : Slightly more complex sentences with common phrases
+        - 中級者 : Sentences with varied vocabulary and more complex structures
+        - 上級者 : Complex sentences with idiomatic expressions and nuanced meanings
 
     Limit your response to an English sentence of approximately 15 words with clear and understandable context.
-"""
+"""                                                                                  # 課題対応 画面指定した英会話レベルを考慮する文章を生成するようプロンプトに追記
 
 # 問題文と回答を比較し、評価結果の生成を支持するプロンプトを作成
 SYSTEM_TEMPLATE_EVALUATION = """

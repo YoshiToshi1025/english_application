@@ -56,18 +56,15 @@ if "messages" not in st.session_state:
         return_messages=True
     )
 
-    # モード「日常英会話」用のChain作成
-    st.session_state.chain_basic_conversation = ft.create_chain(ct.SYSTEM_TEMPLATE_BASIC_CONVERSATION)
-
 # 初期表示
 # col1, col2, col3, col4 = st.columns([1, 1, 1, 2])
 # 提出課題用
 col1, col2, col3, col4 = st.columns([2, 2, 3, 3])
 with col1:
     if st.session_state.start_flg:
-        st.button("開始", use_container_width=True, type="primary")
+        st.button("英会話開始", use_container_width=True, type="primary")      # 修正：ボタン名称を操作説明文に合わせる
     else:
-        st.session_state.start_flg = st.button("開始", use_container_width=True, type="primary")
+        st.session_state.start_flg = st.button("英会話開始", use_container_width=True, type="primary")      # 修正：ボタン名称を操作説明文に合わせる
 with col2:
     st.session_state.speed = st.selectbox(label="再生速度", options=ct.PLAY_SPEED_OPTION, index=3, label_visibility="collapsed")
 with col3:
@@ -94,15 +91,20 @@ with col3:
 with col4:
     st.session_state.englv = st.selectbox(label="英語レベル", options=ct.ENGLISH_LEVEL_OPTION, label_visibility="collapsed")
 
+# モード「日常英会話」用のChain作成                                                            # 課題対応 Chain作成タイミングを英会話レベル指定後に変更
+st.session_state.chain_basic_conversation = ft.create_chain(
+    ct.SYSTEM_TEMPLATE_BASIC_CONVERSATION.format(english_level=st.session_state.englv))     # 課題対応 英会話レベルを考慮した文章を生成
+
 with st.chat_message("assistant", avatar="images/ai_icon.jpg"):
     st.markdown("こちらは生成AIによる音声英会話の練習アプリです。何度も繰り返し練習し、英語力をアップさせましょう。")
     st.markdown("**【操作説明】**")
     st.success("""
     - モードと再生速度を選択し、「英会話開始」ボタンを押して英会話を始めましょう。
     - モードは「日常英会話」「シャドーイング」「ディクテーション」から選べます。
+    - 英会話レベルは「初心者」「初級者」「中級者」「上級者」から選べます。
     - 発話後、5秒間沈黙することで音声入力が完了します。
     - 「一時中断」ボタンを押すことで、英会話を一時中断できます。
-    """)
+    """)                                                             # 課題対応 英会話レベル指定に関する説明文を追加
 st.divider()
 
 # メッセージリストの一覧表示
@@ -138,7 +140,8 @@ if st.session_state.start_flg:
     # 「ディクテーション」ボタン押下時か、「英会話開始」ボタン押下時か、チャット送信時
     if st.session_state.mode == ct.MODE_3 and (st.session_state.dictation_button_flg or st.session_state.dictation_count == 0 or st.session_state.dictation_chat_message):
         if st.session_state.dictation_first_flg:
-            st.session_state.chain_create_problem = ft.create_chain(ct.SYSTEM_TEMPLATE_CREATE_PROBLEM)
+            st.session_state.chain_create_problem = ft.create_chain(
+                ct.SYSTEM_TEMPLATE_CREATE_PROBLEM.format(english_level=st.session_state.englv))     # 課題対応 英会話レベルを考慮した文章を生成
             st.session_state.dictation_first_flg = False
         # チャット入力以外
         if not st.session_state.chat_open_flg:
@@ -234,7 +237,8 @@ if st.session_state.start_flg:
     # 「シャドーイング」ボタン押下時か、「英会話開始」ボタン押下時
     if st.session_state.mode == ct.MODE_2 and (st.session_state.shadowing_button_flg or st.session_state.shadowing_count == 0 or st.session_state.shadowing_audio_input_flg):
         if st.session_state.shadowing_first_flg:
-            st.session_state.chain_create_problem = ft.create_chain(ct.SYSTEM_TEMPLATE_CREATE_PROBLEM)
+            st.session_state.chain_create_problem = ft.create_chain(
+                    ct.SYSTEM_TEMPLATE_CREATE_PROBLEM.format(english_level=st.session_state.englv))     # 課題対応 英会話レベルを考慮した文章を生成
             st.session_state.shadowing_first_flg = False
         
         if not st.session_state.shadowing_audio_input_flg:
